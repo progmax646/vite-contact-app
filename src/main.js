@@ -6,6 +6,7 @@ import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/src/css/index.sass'
 import '/src/style/main.scss'
 import store from '/store'
+import router from "../router";
 import { clearNumber } from '/plugins/custom-functions'
 
 const app = createApp(App)
@@ -17,6 +18,7 @@ app.config.globalProperties.$clearNumber = clearNumber
 app.use(Quasar, {
     plugins: {}
 })
+app.use(router)
 app.use(store)
 app.use(VueMask)
 app.mount('#app')

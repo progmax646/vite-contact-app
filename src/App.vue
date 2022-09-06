@@ -1,10 +1,12 @@
-<script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import Contact from './components/Contact.vue'
+<script>
+export default {
+  mounted() {
+    this.$router.push('/contacts')
+  }
+}
 </script>
 
 <template>
-  <Contact />
+  <router-view></router-view>
 </template>
 
