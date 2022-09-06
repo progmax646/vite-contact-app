@@ -1,0 +1,26 @@
+{
+  "name": "vcontact",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@devindex/vue-mask": "^2.0.3",
+    "@quasar/extras": "^1.15.2",
+    "@vuelidate/core": "^2.0.0-alpha.44",
+    "@vuelidate/validators": "^2.0.0-alpha.31",
+    "quasar": "^2.7.7",
+    "vue": "^3.2.37",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@quasar/vite-plugin": "^1.1.1",
+    "@vitejs/plugin-vue": "^3.1.0",
+    "sass": "^1.54.8",
+    "vite": "^3.1.0"
+  }
+}
