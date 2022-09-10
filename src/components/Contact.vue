@@ -34,7 +34,7 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="d-flex justify-end">
-                      <button class="btn btn-primary mr-2" @click.prevent="saveContact()">Сохранить</button>
+                      <button class="btn btn-primary mr-2" @click.prevent="createContact()">Сохранить</button>
                       <button class="btn btn-primary" @click.prevent="alert = false">Закрыть</button>
                     </div>
                   </div>
@@ -74,7 +74,7 @@
               <td>{{ item.name }}</td>
               <td>{{ item.phone }}</td>
               <td>{{ item.email }}</td>
-              <td>{{ item.tags.length > 0 ? item.tags.map(item => item.label) : 'Отсутвует' }}</td>
+              <td>{{ item.tags.map(item => item.label) }}</td>
               <td>---</td>
             </tr>
             </tbody>
@@ -91,55 +91,65 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { required } from '@vuelidate/validators'
+import { ref, reactive, computed } from 'vue'
+import { useStore } from 'vuex'
+import { clearNumber } from "../plugins/custom-functions";
+
 export default {
-  name: "Contact",
-  data () {
-    return {
-      alert: false,
-      value: null,
-      options: [
-        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-      ],
-      contact: {
-        name: null,
-        email: null,
-        tags: null,
-        phone: null
+  setup() {
+
+    const store = useStore()
+
+    const alert = ref(false)
+    const value = ref({id: 1, label: 'Все'})
+    const options = ref([
+      'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
+    ])
+
+    const contact = reactive({
+      name: null,
+      email: null,
+      tags: null,
+      phone: null
+    })
+
+    const contacts = computed(() => {
+      return store.state.contacts
+    })
+
+    const tags = computed(() => {
+      return store.state.tags
+    })
+
+
+    const getContacts = computed(() => {
+      if (value.value?.id === 1) {
+        return contacts.value
       }
-    }
-  },
-  validations: {
-    contact: {
-      name: { required }
-    }
-  },
-  computed: {
-    ...mapState(['contacts', 'tags']),
-    getContacts () {
-      if (this.value?.id === 1) {
-        return this.contacts
-      }
+
       try {
-        const res = this.contacts.filter(item => item.tags.some((ev) => ev.label === this.value.label))
+        const res = contacts.value.filter(item => item.tags.some((ev) => ev.label === value.value.label))
         if (res.length > 0) {
           return res
         }
       } catch (e) {
-        return this.contacts
+        return contacts.value
       }
+    })
+
+
+
+    // create contact
+
+    const createContact = () => {
+      contact.phone = clearNumber(contact.phone)
+      store.commit('SET_CONTACT', contact)
+      alert.value = !alert.value
     }
-  },
-  methods: {
-    saveContact () {
-      console.log(this.$clearNumber(this.contact.phone))
-      this.$store.commit('SET_CONTACT', {name: this.contact.name, email: this.contact.email, tags: this.contact.tags, phone: this.contact.phone})
-      this.alert = !this.alert
-      for (const [key] of Object.entries(this.contact)) {
-        this.contact[key] = null
-      }
-    }
+
+
+
+    return { alert, value, options, contact, getContacts, tags, createContact }
   }
 }
 </script>

@@ -7,7 +7,7 @@ import 'quasar/src/css/index.sass'
 import '/src/style/main.scss'
 import store from '/store'
 import router from "../router";
-import { clearNumber } from '/plugins/custom-functions'
+import { clearNumber } from '/src/plugins/custom-functions'
 
 const app = createApp(App)
 

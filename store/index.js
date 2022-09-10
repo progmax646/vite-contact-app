@@ -30,7 +30,7 @@ export default createStore({
     },
     mutations: {
         SET_CONTACT (state, contact) {
-            state.contacts = [...state.contacts, contact]
+            state.contacts.unshift(contact)
         }
     },
     actions: {
