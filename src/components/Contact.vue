@@ -6,45 +6,7 @@
         <h4>Contact index</h4>
       </div>
       <div class="col-md-6">
-        <div class="d-flex justify-content-end align-items-center">
-          <button class="btn btn-primary" @click="alert = true">Создать</button>
-          <q-dialog v-model="alert">
-            <q-card>
-              <q-card-section>
-                <div class="text-h6">Создать контакт</div>
-              </q-card-section>
-
-              <q-card-section class="q-pt-none">
-                <form @submit.prevent="createContact()">
-                  <div class="form-group">
-                    <label for="">Ф.И.О</label>
-                    <input v-model="contact.name" class="form-control" :class="{'is-invalid': $v.name.$errors.some(e => e)}">
-                  </div>
-                  <div class="form-group">
-                    <label for="">Номер телефона</label>
-                    <input type="text" class="form-control" v-model="contact.phone" v-mask="'+999 (99) 999 9999'" :class="{'is-invalid': $v.phone.$errors.some(e => e)}">
-                  </div>
-                  <div class="form-group">
-                    <label for="">Email</label>
-                    <input type="text" class="form-control" v-model="contact.email" :class="{'is-invalid': $v.email.$errors.some(e => e)}">
-                  </div>
-                  <div class="form-group">
-                    <label for="">Теги</label>
-                    <q-select multiple filled v-model="contact.tags" :options="tags" label="Выбрать тэг" :class="{'is-invalid': $v.tags.$errors.some(e => e)}" />
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="d-flex justify-end">
-                        <button class="btn btn-primary mr-2" type="submit">Сохранить</button>
-                        <button class="btn btn-primary" @click.prevent="alert = false">Закрыть</button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </q-card-section>
-            </q-card>
-          </q-dialog>
-        </div>
+        <CreateContactModal @input="getTest"/>
       </div>
     </div>
     <div class="row pb-4">
@@ -93,24 +55,18 @@
 </template>
 
 <script>
-import { ref, reactive, computed } from 'vue'
-import { required, email } from '@vuelidate/validators'
-import useVuelidate from '@vuelidate/core'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { clearNumber } from "../plugins/custom-functions";
+import CreateContactModal from "./CreateContactModal.vue";
 export default {
+  components: {
+    CreateContactModal
+  },
   setup() {
     const store = useStore()
 
-    const alert = ref(false)
     const value = ref({id: 1, label: 'Все'})
 
-    const contact = reactive({
-      name: null,
-      email: null,
-      tags: null,
-      phone: null
-    })
 
     const contacts = computed(() => {
       return store.state.contacts
@@ -119,6 +75,10 @@ export default {
     const tags = computed(() => {
       return store.state.tags
     })
+
+    const getTest = (val) => {
+      console.log(val)
+    }
 
 
     const getContacts = computed(() => {
@@ -136,38 +96,13 @@ export default {
       }
     })
 
-    const rules = computed(() => {
-      return {
-        name: { required },
-        email: { required, email },
-        tags: { required },
-        phone: { required }
-      }
-    })
-
-    const $v = useVuelidate(rules, contact)
-
-
-
-// create contact
-
-    const createContact = () => {
-      $v.value.$validate()
-      if (!$v.value.$error) {
-        contact.phone = clearNumber(contact.phone)
-        store.commit('SET_CONTACT', contact)
-        alert.value = !alert.value
-      }
-    }
 
     return {
-      createContact,
       getContacts,
       alert,
       value,
       tags,
-      contact,
-      $v
+      getTest
     }
 
   },
