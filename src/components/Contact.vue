@@ -15,30 +15,32 @@
               </q-card-section>
 
               <q-card-section class="q-pt-none">
-                <div class="form-group">
-                  <label for="">Ф.И.О</label>
-                  <input type="text" class="form-control" v-model="contact.name">
-                </div>
-                <div class="form-group">
-                  <label for="">Номер телефона</label>
-                  <input type="text" class="form-control" v-model="contact.phone" v-mask="'+999 (99) 999 9999'">
-                </div>
-                <div class="form-group">
-                  <label for="">Email</label>
-                  <input type="text" class="form-control" v-model="contact.email">
-                </div>
-                <div class="form-group">
-                  <label for="">Теги</label>
-                  <q-select multiple filled v-model="contact.tags" :options="tags" label="Выбрать тэг" />
-                </div>
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="d-flex justify-end">
-                      <button class="btn btn-primary mr-2" @click.prevent="createContact()">Сохранить</button>
-                      <button class="btn btn-primary" @click.prevent="alert = false">Закрыть</button>
+                <form @submit.prevent="createContact()">
+                  <div class="form-group">
+                    <label for="">Ф.И.О</label>
+                    <input v-model="contact.name" class="form-control" :class="{'is-invalid': $v.name.$errors.some(e => e)}">
+                  </div>
+                  <div class="form-group">
+                    <label for="">Номер телефона</label>
+                    <input type="text" class="form-control" v-model="contact.phone" v-mask="'+999 (99) 999 9999'" :class="{'is-invalid': $v.phone.$errors.some(e => e)}">
+                  </div>
+                  <div class="form-group">
+                    <label for="">Email</label>
+                    <input type="text" class="form-control" v-model="contact.email" :class="{'is-invalid': $v.email.$errors.some(e => e)}">
+                  </div>
+                  <div class="form-group">
+                    <label for="">Теги</label>
+                    <q-select multiple filled v-model="contact.tags" :options="tags" label="Выбрать тэг" :class="{'is-invalid': $v.tags.$errors.some(e => e)}" />
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="d-flex justify-end">
+                        <button class="btn btn-primary mr-2" type="submit">Сохранить</button>
+                        <button class="btn btn-primary" @click.prevent="alert = false">Закрыть</button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </form>
               </q-card-section>
             </q-card>
           </q-dialog>
@@ -92,19 +94,16 @@
 
 <script>
 import { ref, reactive, computed } from 'vue'
+import { required, email } from '@vuelidate/validators'
+import useVuelidate from '@vuelidate/core'
 import { useStore } from 'vuex'
 import { clearNumber } from "../plugins/custom-functions";
-
 export default {
   setup() {
-
     const store = useStore()
 
     const alert = ref(false)
     const value = ref({id: 1, label: 'Все'})
-    const options = ref([
-      'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-    ])
 
     const contact = reactive({
       name: null,
@@ -137,20 +136,41 @@ export default {
       }
     })
 
+    const rules = computed(() => {
+      return {
+        name: { required },
+        email: { required, email },
+        tags: { required },
+        phone: { required }
+      }
+    })
+
+    const $v = useVuelidate(rules, contact)
 
 
-    // create contact
+
+// create contact
 
     const createContact = () => {
-      contact.phone = clearNumber(contact.phone)
-      store.commit('SET_CONTACT', contact)
-      alert.value = !alert.value
+      $v.value.$validate()
+      if (!$v.value.$error) {
+        contact.phone = clearNumber(contact.phone)
+        store.commit('SET_CONTACT', contact)
+        alert.value = !alert.value
+      }
     }
 
+    return {
+      createContact,
+      getContacts,
+      alert,
+      value,
+      tags,
+      contact,
+      $v
+    }
 
-
-    return { alert, value, options, contact, getContacts, tags, createContact }
-  }
+  },
 }
 </script>
 

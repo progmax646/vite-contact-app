@@ -14,11 +14,9 @@
     "@vuelidate/core": "^2.0.0-alpha.44",
     "@vuelidate/validators": "^2.0.0-alpha.31",
     "quasar": "^2.7.7",
-    "vee-validate": "^4.6.7",
     "vue": "^3.2.37",
     "vue-router": "4",
-    "vuex": "^4.0.2",
-    "yup": "^0.32.11"
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@quasar/vite-plugin": "^1.1.1",

@@ -6,14 +6,12 @@ import '@quasar/extras/material-icons/material-icons.css'
 import 'quasar/src/css/index.sass'
 import '/src/style/main.scss'
 import store from '/store'
+import { useStore } from 'vuex'
 import router from "../router";
 import { clearNumber } from '/src/plugins/custom-functions'
 
 const app = createApp(App)
 
-// global
-
-app.config.globalProperties.$clearNumber = clearNumber
 
 app.use(Quasar, {
     plugins: {}
